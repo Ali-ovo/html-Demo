@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+
+  <script>
+    /*     // Symbol 不能对数据进行运算
+        let s = Symbol();
+        let s2 = Symbol("1")
+        let s3 = Symbol("1")
+        console.log(s2 === s3); // false
+    
+        let s4 = Symbol.for('1')
+        let s5 = Symbol.for('1')
+        console.log(s4 === s5); //true
+    
+    
+        let youxi = {
+          name: '狼人杀',
+          [Symbol('say')]: function () {
+            console.log("我发言");
+          },
+    
+          [Symbol('zibao')]: function () {
+            console.log("我自爆");
+          }
+        }
+        console.log(youxi);
+    
+    
+        class Person {
+          // hasInstance 重写 Person的类型检测
+          static [Symbol.hasInstance](par) {
+            console.log(par);  //o
+            console.log("检测类型");
+          }
+        }
+        let o = {}
+        console.log(o instanceof Person);
+    
+    
+        const arr = [1, 2, 3]
+        const arr2 = [4, 5, 6]
+        // isConcatSpreadable 控制是否可以展开
+        arr2[Symbol.isConcatSpreadable] = false;
+        console.log(arr.concat(arr2)); */
+
+
+
+    // 迭代器 iterator
+    // const a = [1, 3, 6, 5, 8]
+    // for (const v of a) {
+    //   console.log(v);
+    // }
+    // let iterator = a[Symbol.iterator]()
+    // console.log(iterator.next());
+    // console.log(iterator.next());
+    // console.log(iterator.next());
+    // console.log(iterator.next());
+
+    // const banji = {
+    //   name: '终极一班',
+    //   stus: [
+    //     '小明',
+    //     '小宁',
+    //     '小天',
+    //     '汪大东'
+    //   ],
+    //   [Symbol.iterator]() {
+    //     let index = 0;
+    //     let _this = this
+    //     return {
+    //       next: function () {
+    //         if (index < _this.stus.length) {
+    //           const result = { value: _this.stus[index], done: false }
+    //           index++;
+    //           return result
+    //         } else {
+    //           return { value: undefined, done: true }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    // for (const v of banji) {
+    //   console.log(v);
+    // }
+
+
+
+    /* // 生成器 其实就是一个特殊的函数 
+    // 异步编程
+    function* gen(arg) {
+      console.log(arg);
+      // 代码执行是一块一块的
+      let one = yield '没耳朵';
+      console.log(one);
+
+      let two = yield '没尾巴';
+      console.log(two);
+
+
+      yield '真奇怪';
+      console.log('33');
+    }
+
+    let iterator = gen('aaa')
+    // 只能用 next 才可以执行函数
+    console.log(iterator.next());
+    console.log(iterator.next('bbb'));
+    console.log(iterator.next('ccc'));
+    console.log(iterator.next());
+
+    // for (const v of gen()) {
+    //   console.log(v);
+    // } */
+    /* 
+        // 设置异步调用
+        function one() {
+          setTimeout(() => {
+            console.log(111);
+            // 掉完第一次后调用下一次
+            iterator.next()
+          }, 1000);
+        }
+        function two() {
+          setTimeout(() => {
+            console.log(222);
+            iterator.next()
+          }, 1000);
+        }
+        function three() {
+          setTimeout(() => {
+            console.log(333);
+          }, 1000);
+        }
+        function* gen() {
+          yield one();
+          yield two();
+          yield three();
+        }
+    
+        let iterator = gen()
+        iterator.next()
+     */
+
+    // function getUsers() {
+    //   setTimeout(() => {
+    //     let data = '用户数据'
+    //     // 调用next方法把数据传入
+    //     iterator.next(data);
+    //   }, 1000);
+    // }
+
+    // function getOrders() {
+    //   setTimeout(() => {
+    //     let data = '订单数据'
+    //     // 调用next方法把数据传入
+    //     iterator.next(data);
+    //   }, 1000);
+    // }
+    // function getGoods() {
+    //   setTimeout(() => {
+    //     let data = '商品数据'
+    //     // 调用next方法把数据传入
+    //     iterator.next(data);
+    //   }, 1000);
+    // }
+    // function* get() {
+    //   // 第二个next的返回值赋值给第一个调用 
+    //   let users = yield getUsers();
+    //   console.log(users);
+
+    //   // 第三个next的返回值赋值给第一个调用 
+    //   let order = yield getOrders();
+    //   console.log(order);
+    //   let goods = yield getGoods();
+    //   console.log(goods);
+
+    // }
+    // // 调用生成器
+    // let iterator = get();
+    // iterator.next()
+
+
+    // Promise 封装AjAx
+    // const p = new Promise((res, rej) => {
+    //   const xhr = new XMLHttpRequest()
+
+    //   xhr.open('get', 'https://api.apiopen.top/getJoke')
+
+    //   xhr.send()
+
+    //   xhr.onreadystatechange = function () {
+    //     if (xhr.readyState === 4) {
+    //       if (xhr.status >= 200 & xhr.status < 300) {
+    //         res(xhr.response);
+    //       } else {
+    //         rej(xhr.status);
+    //       }
+    //     }
+    //   }
+    // })
+
+    // p.then(res => {
+    //   console.log(res);
+    // }).catch(rej => {
+    //   console.log(rej);
+    // })
+
+    // const p = new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve('66')
+    //   }, 1000);
+    // })
+
+    // const result = p.then(value => {
+    //   // console.log(res);
+    //   return new Promise((resolve, reject) => {
+    //     resolve('ok')
+    //   })
+    // }).catch(reject => {
+    //   console.log(reject);
+    // })
+    // console.log(result);
+
+
+    // set集合
+    // let s = new Set();
+    // let s2 = new Set([1, 2, 2, 4]);
+
+    // console.log(s, typeof s);
+    // console.log(s2, typeof s2);  [1, 2, 4]
+    // 元素个数
+    // console.log(s2.size);    3
+    // 元素添加
+    // s2.add(5)   [1, 2, 4, 5]
+    // 元素检测
+    // console.log(s2.has(1));  true
+    // 清空
+    // s2.clear() {}
+
+    /*     let arr = [1, 2, 3, 4, 5, 4, 3, 2, 1]
+        // 去重
+        let result = new Set(arr)
+        console.log(result);
+    
+        // 交集
+        let arr2 = [4, 5, 6, 5, 6]
+        let result = [...new Set(arr)].filter(i => new Set(arr2).has(i))
+        console.log(result); // 4,5
+    
+        // 并集
+        let union = [...new Set([...arr, ...arr2])]
+        console.log(union); //1,2,3,4,5,6
+    
+        // 差集
+        let diff = [...new Set(arr)].filter(i => !(new Set(arr2).has(i)))
+        console.log(diff); ///1,2,3 */
+
+
+
+
+    /*     // Map 
+        let m = new Map()
+        m.set('123', '666')
+        m.set('change', function () {
+          console.log(66);
+        })
+    
+        let key = {
+          school: 'AUTO'
+        }
+    
+        m.set(key, ['重庆', '上海'])
+        console.log(m);
+    
+        console.log(m.size);
+    
+        // 删除
+        console.log(m.delete('123'));
+        // 获取
+        console.log(m.get('change'));
+        // 清空
+        m.clear()
+        console.log(m);
+        // for of 可以遍历 */
+
+
+  
+
+
+
+
+  </script>
+</body>
+
+</html>

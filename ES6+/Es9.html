@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <script>
+    /*  function connect({ host, port, ...user }) {
+       console.log(host);
+       console.log(port);
+       console.log(user);
+     }
+ 
+     connect({
+       host: '127.0.0.1',
+       port: 8888,
+       username: 'root',
+       password: '123'
+     }) */
+
+
+
+
+    /*     //  对象展开
+        const one = {
+          q: '流影电光闪'
+        }
+        const two = {
+          w: '天羽屠龙舞'
+        }
+        const three = {
+          e: '极地沙尘暴'
+        }
+        const four = {
+          r: '月色血风暴'
+        }
+    
+        const mangseng = { ...one, ...two, ...three, ...four, }
+        console.log(mangseng);
+        // {q: "流影电光闪", w: "天羽屠龙舞", e: "极地沙尘暴", r: "月色血风暴"}
+     */
+
+
+    //  正则命名分组
+    // let str = '<a href="http://www.4399.com">小游戏</a>'
+    // // 提取url 和标签文本
+    // const reg = /<a href="(.*)">(.*)<\/a>/
+
+    // const result = reg.exec(str)
+    // console.log(result); //['<a href="http://www.4399.com">小游戏</a>','http://www.4399.com','小游戏']
+
+    // //  正则表达式命名捕获组
+    // const reg = /<a href="(?<url>.*)">(?<text>.*)<\/a>/
+    // const result = reg.exec(str)
+    // console.log(result.groups); //{ text: "小游戏", url: "http://www.4399.com" }
+
+
+    // 正则断言
+    // let strs = 'JS5211314你知道么555哈哈哈哈'
+    // const reg = /\d+(?=哈)/
+    // console.log(reg.exec(strs)); //['555']
+
+    // // 反向断言
+    // const reg = /(?<=么)\d+/
+    // console.log(reg.exec(strs)); //['555']
+
+
+    // 正则 dotAll模式 dot . 元字符 可以匹配任意字符
+    let str = `
+        <ul>
+        <li>
+          <a>肖生克的救赎</a>
+          <p>上映时间：1994-09-10</p>
+        </li>
+        <li>
+          <a>阿甘正传</a>
+          <p>上映时间：1994-07-06</p>
+        </li>
+      </ul>
+    `
+
+    const reg = /<li>.*?<a>(?<name>.*?)<\/a>.*?<p>(?<text>.*?)<\/p>/gs
+    let result;
+    let data = []
+    while (result = reg.exec(str)) {
+      data.push(result.groups)
+    }
+    console.log(data);
+    // [{name: "肖生克的救赎", text: "上映时间：1994-09-10"},{name: "阿甘正传", text: "上映时间：1994-07-06"}]
+
+
+  </script>
+
+</body>
+
+</html>

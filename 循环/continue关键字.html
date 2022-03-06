@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //continue关键字
+        for (var i = 1; i <= 5; i++) {
+            if (i == 3) {
+                continue;
+            } else if (i == 4) {
+                break;
+            }
+            console.log('我正在吃第' + i + '个冰淇淋');
+        }
+
+        //1到100之间 除能被7整除的整数和；
+        var num = 0;
+        for (var i = 1; i <= 100; i++) {
+            if (i % 7 == 0) {
+                continue;
+            }
+            num += i;
+        }
+        console.log(num);
+    </script>
+
+</body>
+
+</html>

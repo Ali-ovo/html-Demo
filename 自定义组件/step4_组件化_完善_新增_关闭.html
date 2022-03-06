@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/theme-chalk/index.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/index.js"></script>
+  </head>
+  <style>
+    .ui-multiple-select .el-select__tags-text {
+      cursor: pointer;
+    }
+
+    .ui-multiple-select
+      .el-select-dropdown.is-multiple
+      .el-select-dropdown__item.selected::after {
+      right: 10px;
+    }
+
+    .ui-multiple-select .el-select-dropdown__item:hover .el-icon-close {
+      display: block;
+    }
+
+    .ui-multiple-select .el-select-dropdown__item .el-icon-close {
+      display: none;
+      position: absolute;
+      right: 30px;
+      top: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgb(245, 108, 108);
+    }
+
+    .ui-multiple-select .el-tag input {
+      display: none;
+      font-size: 12px;
+      height: 18px;
+    }
+
+    .ui-multiple-select .el-tag--small.el-tag--editing {
+      padding: 0 2px;
+    }
+
+    .ui-multiple-select .el-tag--editing input {
+      display: block;
+      border: 1px solid #409eff;
+      width: 50px;
+    }
+
+    .ui-multiple-select .el-tag--editing input:focus,
+    .ui-multiple-select .addInput:focus {
+      border: 1px solid #409eff;
+      outline: none;
+    }
+
+    .ui-multiple-select .addInput {
+      width: 180px;
+      padding-left: 4px;
+      margin-left: 5px;
+      font-size: 12px;
+      height: 20px;
+      border: 1px solid #e9e9eb;
+      border-radius: 4px;
+    }
+
+    .ui-multiple-select .el-tag--editing .el-tag__close,
+    .ui-multiple-select .el-tag--editing .el-select__tags-text {
+      display: none;
+    }
+  </style>
+
+  <body>
+    <div id="app">
+      <ui-multiple-select
+        v-model="value"
+        :options="options"
+      ></ui-multiple-select>
+    </div>
+  </body>
+  <script>
+    Vue.component("ui-multiple-select", {
+      directives: {
+        "ui-focus": {
+          inserted(el, binding) {
+            if (binding.value === undefined) {
+              el.focus();
+            }
+          },
+          update(el, binding) {
+            if (binding.value) {
+              // console.log(el)
+              el.focus();
+            }
+          },
+        },
+      },
+      props: ["options", "value"],
+      template: `
+        <div class="ui-multiple-select">
+            <div class="el-select" @click="handleFocusInput" ref="select">
+                <div class="el-select__tags" ref="tags" style="width: 100%; max-width: 208px;">
+                    <span>
+                        <span class="el-tag el-tag--info el-tag--small el-tag--light" :class="{'el-tag--editing': item.isEditing}" v-for="(item,index) in currentValue" :key="index">
+                            <input type="text" 
+                                :value="item.label" 
+                                @blur="handleChangeValue(item, $event)" 
+                                v-ui-focus="current == item"/>
+                            <span class="el-select__tags-text" @click.stop="handleClickLabel(item)"
+                            title="编辑">{{item.label}}</span>
+                            <i class="el-tag__close el-icon-close" title="删除" @click.stop="handleRemoveValue(item)"></i>
+                        </span>
+                        <input type="text" class="addInput" v-model="addValue" v-ui-focus @click.stop @keyup.enter="handleAddValue()" @blur="handleAddValue()">
+                    </span>
+                </div>
+                <div class="el-input el-input--suffix" :class="{'is-focus': isFocus}">
+                    <input type="text" readonly="readonly" autocomplete="off" placeholder="" class="el-input__inner"
+                        :style="{height: height+'px'}">
+                    <span class="el-input__suffix">
+                        <span class="el-input__suffix-inner">
+                            <i class="el-select__caret el-input__icon el-icon-arrow-up" :class="{'is-reverse': isFocus}"></i>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="el-select-dropdown el-popper is-multiple"
+                style="min-width: 240px; transform-origin: center top; z-index: 2015; position: absolute;"
+                x-placement="bottom-start" 
+                v-show="isFocus" 
+                :style="{
+                    top: top+height+'px', 
+                    left: left+'px'
+                }">
+                <div class="el-scrollbar" style="">
+                    <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                        style="margin-bottom: -17px; margin-right: -17px;">
+                        <ul class="el-scrollbar__view el-select-dropdown__list">
+                            <li class="el-select-dropdown__item" 
+                            :class="{selected: item.isSelected}"
+                            @click="handleClickOption(item)"
+                            v-for="(item, index) in options" :key="index">
+                                <span>{{item.label}}</span>
+                                <i class="el-icon-close" @click.stop="handleRemoveOption(item)"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="el-scrollbar__bar is-horizontal">
+                        <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                    </div>
+                    <div class="el-scrollbar__bar is-vertical">
+                        <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                    </div>
+                </div>
+
+                <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+            </div>
+        </div>
+    `,
+      data() {
+        return {
+          current: null, //当前选中
+          isFocus: false,
+          top: 0,
+          height: 40,
+          left: 0,
+          addValue: "",
+          currentValue: [],
+        };
+      },
+      mounted() {
+        this.value.forEach((t) => {
+          let f = this.options.find((item) => item.value === t);
+          this.currentValue.push({
+            value: t,
+            label: f ? f.label : t,
+            isEditing: false,
+          });
+        });
+        this._fixOptions();
+        this.$nextTick(() => {
+          this._fixSize();
+        });
+      },
+      methods: {
+        _documentClick() {
+          this.isFocus = false;
+        },
+        _fixOptions() {
+          this.options.forEach((t) => {
+            let f = this.value.find((item) => item == t.value);
+            // console.log(f)
+            this.$set(t, "isSelected", f ? true : false);
+          });
+        },
+        _fixValue() {
+          let value = this.currentValue.map((t) => t.value);
+          // todo,时机触发有问题,空了完善
+          this.$emit("input", value);
+        },
+        _fixSize() {
+          let select = this.$refs.select;
+          let tags = this.$refs.tags;
+          let height = this._getHeight(tags);
+          let offset = this._getOffset(select);
+          // console.log('offset', offset)
+          // console.log('height', height)
+          this.height = height + 12;
+          this.top = offset.top;
+          this.left = offset.left;
+        },
+        _getOffset(el) {
+          const box = el.getBoundingClientRect();
+          return {
+            top:
+              box.top + window.pageYOffset - document.documentElement.clientTop,
+            left:
+              box.left +
+              window.pageXOffset -
+              document.documentElement.clientLeft,
+          };
+        },
+        _getHeight(el) {
+          const styles = window.getComputedStyle(el);
+          const height = el.offsetHeight;
+          const borderTopWidth = parseFloat(styles.borderTopWidth);
+          const borderBottomWidth = parseFloat(styles.borderBottomWidth);
+          const paddingTop = parseFloat(styles.paddingTop);
+          const paddingBottom = parseFloat(styles.paddingBottom);
+          return (
+            height -
+            borderBottomWidth -
+            borderTopWidth -
+            paddingTop -
+            paddingBottom
+          );
+        },
+        handleClickOption(item) {
+          item.isSelected = !item.isSelected;
+          if (item.isSelected) {
+            this.handleAddValue(item);
+          } else {
+            this.handleRemoveValue(item);
+          }
+        },
+        handleRemoveOption(item) {
+          var index = this.options.findIndex((t) => t == item);
+          this.currentValue = this.currentValue.filter(
+            (t) => t.value != item.value
+          );
+          this.options.splice(index, 1);
+          this._fixValue();
+        },
+        handleAddValue(item) {
+          if (item) {
+            this.currentValue.push({
+              label: item.label,
+              value: item.value,
+              isEditing: false,
+            });
+          } else {
+            this.currentValue.push({
+              label: this.addValue,
+              value: this.addValue,
+              isEditing: false,
+            });
+            this.addValue = "";
+          }
+
+          this._fixValue();
+          this.$nextTick(() => {
+            this._fixOptions();
+            this._fixSize();
+          });
+        },
+        handleRemoveValue(item) {
+          this.currentValue = this.currentValue.filter(
+            (t) => t.value != item.value
+          );
+          this._fixValue();
+          this.$nextTick(() => {
+            this._fixOptions();
+            this._fixSize();
+          });
+        },
+        handleFocusInput() {
+          this.isFocus = !this.isFocus;
+          if (this.isFocus) {
+            this._fixSize();
+          }
+        },
+        handleClickLabel(item) {
+          item.isEditing = true;
+          this.current = item;
+        },
+        handleChangeValue(item, event) {
+          // todo:这里可能问题
+          item.label = item.value = event.target.value.trim();
+          item.current = null;
+          this._fixValue();
+          this.$nextTick(() => this._fixOptions());
+          item.isEditing = false;
+        },
+      },
+      watch: {
+        isFocus(val) {
+          var self = this;
+          var fun = function (event) {
+            console.log(event);
+            let el = event.target;
+            let inSelect = el.closest(".ui-multiple-select");
+            if (!inSelect) {
+              self.isFocus = false;
+            }
+          };
+          if (val) {
+            document.addEventListener("click", fun);
+          } else {
+            document.removeEventListener("click", fun);
+          }
+        },
+      },
+    });
+    var vm = new Vue({
+      el: "#app",
+      data() {
+        return {
+          value: ["选项1", "选项2"],
+          options: [
+            {
+              value: "选项1",
+              label: "黄金糕",
+            },
+            {
+              value: "选项2",
+              label: "双皮奶",
+            },
+            {
+              value: "选项3",
+              label: "蚵仔煎",
+            },
+            {
+              value: "选项4",
+              label: "龙须面",
+            },
+            {
+              value: "选项5",
+              label: "北京烤鸭",
+            },
+          ],
+        };
+      },
+    });
+  </script>
+</html>

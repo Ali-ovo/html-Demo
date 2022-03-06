@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var i = 1;
+        var num = 0;
+        do {
+            console.log('已经' + i + '岁');
+            i++;
+            num += i;
+
+        } while (i <= 100);
+        //----------------------------
+        var sum = 0;
+        var j = 1;
+        do {
+            sum += j;
+            j++;
+
+        } while (j <= 100);
+        console.log(sum);
+        //----------------------------
+        var msg = prompt('爱你爹我吗');
+        do {
+            msg = prompt('？');
+
+        } while (msg != '滚') {};
+        alert('滚就滚')
+    </script>
+
+</body>
+
+</html>

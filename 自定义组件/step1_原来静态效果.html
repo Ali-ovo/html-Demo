@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.13.2/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h3>激活输入框</h3>
+        <div class="el-select">
+            <div class="el-select__tags" style="width: 100%; max-width: 208px;">
+                <span>
+                    <span class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">双皮奶</span><i class="el-tag__close el-icon-close"></i></span>
+                    <span class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">龙须面</span><i class="el-tag__close el-icon-close"></i></span>
+                </span>
+
+            </div>
+            <div class="el-input el-input--suffix is-focus">
+                <input type="text" readonly="readonly" autocomplete="off" placeholder="" class="el-input__inner"
+                    style="height: 40px;">
+                <span class="el-input__suffix">
+                    <span class="el-input__suffix-inner">
+                        <i class="el-select__caret el-input__icon el-icon-arrow-up is-reverse"></i>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <h3>未激活输入框</h3>
+        <div class="el-select">
+            <div class="el-select__tags" style="width: 100%; max-width: 208px;">
+                <span>
+                    <span class="el-tag el-tag--info el-tag--small el-tag--light">
+                        <span class="el-select__tags-text">双皮奶</span><i class="el-tag__close el-icon-close"></i>
+                    </span>
+                    <span class="el-tag el-tag--info el-tag--small el-tag--light">
+                        <span class="el-select__tags-text">龙须面</span><i class="el-tag__close el-icon-close"></i>
+                    </span>
+                </span>
+            </div>
+            <div class="el-input el-input--suffix">
+                <input type="text" readonly="readonly" autocomplete="off" placeholder="" class="el-input__inner"
+                    style="height: 40px;">
+                <span class="el-input__suffix">
+                    <span class="el-input__suffix-inner">
+                        <i class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <h3>多行</h3>
+        <div class="el-select">
+            <div class="el-select__tags" style="width: 100%; max-width: 208px;">
+                <span><span class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">龙须面</span><i
+                            class="el-tag__close el-icon-close"></i></span><span
+                        class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">蚵仔煎</span><i
+                            class="el-tag__close el-icon-close"></i></span><span
+                        class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">双皮奶</span><i
+                            class="el-tag__close el-icon-close"></i></span><span
+                        class="el-tag el-tag--info el-tag--small el-tag--light"><span
+                            class="el-select__tags-text">黄金糕</span><i
+                            class="el-tag__close el-icon-close"></i></span></span>
+
+            </div>
+            <div class="el-input el-input--suffix">
+                <input type="text" readonly="readonly" autocomplete="off" placeholder="" class="el-input__inner"
+                    style="height: 62px;">
+                <span class="el-input__suffix"><span class="el-input__suffix-inner"><i
+                            class="el-select__caret el-input__icon el-icon-arrow-up"></i>
+
+
+
+
+                    </span>
+                </span>
+
+
+            </div>
+        </div>
+        <h3>弹出层</h3>
+        <div class="el-select-dropdown el-popper is-multiple"
+            style="min-width: 240px; transform-origin: center top; z-index: 2015; position: absolute; top: 374px; left: 35px;"
+            x-placement="bottom-start">
+            <div class="el-scrollbar" style="">
+                <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                    style="margin-bottom: -17px; margin-right: -17px;">
+                    <ul class="el-scrollbar__view el-select-dropdown__list">
+                        <li class="el-select-dropdown__item"><span>黄金糕</span></li>
+                        <li class="el-select-dropdown__item selected"><span>双皮奶</span></li>
+                        <li class="el-select-dropdown__item"><span>蚵仔煎</span></li>
+                        <li class="el-select-dropdown__item selected"><span>龙须面</span></li>
+                        <li class="el-select-dropdown__item hover"><span>北京烤鸭</span></li>
+                    </ul>
+                </div>
+                <div class="el-scrollbar__bar is-horizontal">
+                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                </div>
+                <div class="el-scrollbar__bar is-vertical">
+                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                </div>
+            </div>
+
+            <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+        </div>
+
+    </div>
+</body>
+<script>
+    Vue.component('ui-multiple-select', {
+        template: `
+        <div></div>
+    `,
+        data() {
+            return {
+
+            }
+        },
+        mounted() {
+
+        },
+        methods: {
+
+        }
+    })
+    var vm = new Vue({
+        el: '#app'
+    })
+</script>
+
+</html>

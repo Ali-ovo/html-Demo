@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        console.log('-----------------');
+
+        var num1 = 0;
+        var even1 = 0;
+
+        var i = 1;
+        while (i <= 100) {
+            num1 += i;
+            i++;
+
+            if (i % 2 != 0) {
+                continue;
+            }
+            even1 += i;
+
+        }
+        console.log(' 总和是' + num1 + ' 平均值是' + (num1 / 100) + ' 偶数和是' + even1);
+        console.log('-----------------');
+        //--------------------------
+        var seven = 0;
+        var j = 1;
+        while (j <= 100) {
+            j++;
+            if (j % 7 == 0) {
+                seven += j;
+            }
+        }
+        console.log(seven);
+    </script>
+
+
+</body>
+
+</html>

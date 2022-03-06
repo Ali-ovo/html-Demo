@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        console.log('-------------');
+        //--------------------------
+        var str = '';
+        var i = 1;
+        while (i <= 5) {
+            var j = 1;
+
+            while (j <= 5) {
+                str += '*';
+                j++;
+            }
+            i++;
+            str += '\n';
+
+        }
+        console.log(str);
+        console.log('-------------');
+        //--------------------------
+        var str = '';
+        var i = 1;
+        while (i <= 5) {
+            var j = 1;
+
+            while (j <= i) {
+                str += '*';
+                j++;
+            }
+            i++;
+            str += '\n';
+
+        }
+        console.log(str);
+    </script>
+
+</body>
+
+</html>
