@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      height: 1000px;
+    }
+
+    .container {
+      float: left;
+      border: 1px solid #000;
+      display: flex;
+      width: 290px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      resize: both;
+    }
+
+    .list {
+      width: 65px;
+      height: 65px;
+      margin-bottom: 10px;
+      background-color: rgb(148, 148, 131);
+      margin-right: 10px;
+    }
+
+    .list:nth-child(4n) {
+      margin-right: 0px;
+    }
+
+    .container::after {
+      content: '';
+      display: block;
+      flex: 1 1 auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+    <div class="list"></div>
+  </div>
+  <div>
+    切换子项目数量
+    <select id="select">
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+    </select>
+  </div>
+
+  <script>
+    let container = document.querySelector('.container');
+    let box = document.querySelector('#select')
+
+    box.onchange = (e) => {
+      let len = e.target.value;
+      let html = Array.from({ length: len }, () => `<div class="list"></div>`).reduce((pre, item) => {
+        return pre += item;
+      }, '');
+      container.innerHTML = html;
+    }
+  </script>
+</body>
+
+</html>
