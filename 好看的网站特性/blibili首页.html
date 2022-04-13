@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+  </head>
+
+  <style>
+    .animated-banner {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+    }
+    .layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-align: center;
+      align-items: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+    }
+  </style>
+  <body>
+    <div class="animated-banner">
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/8e084d67aa18ed9c42dce043e06e16b79cbb50ef.png"
+          data-height="250"
+          data-width="3000"
+          height="250"
+          width="3000"
+        />
+      </div>
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/082e39ef757826401ef82da818310d42e05bc2de.png"
+          data-height="275"
+          data-width="3000"
+          height="165"
+          width="1800"
+        />
+      </div>
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/dbd5c17c4315714de9e4ee119694d2e9efaf9639.png"
+          data-height="250"
+          data-width="3000"
+          height="250"
+          width="3000"
+        />
+      </div>
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/cd9be0a2716adbae85fd899259381c4b2c2893c7.png"
+          data-height="250"
+          data-width="3000"
+          height="150"
+          width="1800"
+        />
+      </div>
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/88537437a7916ecde847fa46652b44fbd3cbbb06.png"
+          data-height="275"
+          data-width="3000"
+          height="165"
+          width="1800"
+        />
+      </div>
+      <div class="layer">
+        <img
+          src="https://i0.hdslb.com/bfs/vc/37d9a93baa55870506a6f3e6308e7a0c386b97c7.png"
+          data-height="275"
+          data-width="3000"
+          height="178"
+          width="1950"
+        />
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  function clamp(x, min, max) {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+  }
+  document.onmousemove = function (event) {
+    var x = event.pageX;
+    var y = event.pageY;
+    // 设置不同图层img标签的模糊与移动
+    var imgs = document.getElementsByTagName("img");
+    imgs[1].setAttribute("style", "filter: blur(" + clamp(x/75 - 7, 0, 7) + "px); transform: translate(" + x/50 + "px, 0px) rotate(0deg);");
+    imgs[2].setAttribute("style", "filter: blur(" + clamp(x/125 - 5, 0, 5) + "px); transform: translate(" + x/40 + "px, 0px) rotate(0deg);");
+    imgs[3].setAttribute("style", "filter: blur(" + clamp(x/250 - 3, 0, 3) + "px); transform: translate(" + x/30 + "px, 0px) rotate(0deg);");
+    imgs[4].setAttribute("style", "filter: blur(" + clamp(3 - x/250, 0, 3) + "px); transform: translate(" + x/20 + "px, 0px) rotate(0deg);");
+    imgs[5].setAttribute("style", "filter: blur(" + clamp(3 - x/250, 0, 3) + "px); transform: translate(" + x/10 + "px, 0px) rotate(0deg);");
+  };
+</script>
