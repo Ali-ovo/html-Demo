@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <style>
+    :root {
+      font-size: 15px;
+      font-family: Helvetica;
+
+      --body-width: 480px;
+      --card-width: 420px;
+      --card-height: 280px;
+      --img-height: 226px;
+      --img-height-expanded: 320px;
+
+      background-color: #333;
+    }
+
+    body {
+      width: var(--body-width);
+      background-color: #eee;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem 0;
+    }
+
+    body.noscroll {
+      overflow: hidden;
+    }
+
+    .card {
+      width: var(--card-width);
+      height: var(--card-height);
+      background-color: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 .2rem 2rem rgba(0, 0, 0, .1);
+      margin: 1rem 0;
+      transition: .3s all cubic-bezier(0, 1, 0.95, 1.05);
+    }
+
+    .card img {
+      display: block;
+      width: 100%;
+      height: var(--img-height);
+      object-fit: cover;
+
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
+
+    .card h4 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: .8rem 1.2rem;
+      background-color: #fff;
+      line-height: 2rem;
+      letter-spacing: -.5px;
+      padding-bottom: 0;
+    }
+
+    .card .content-wrapper {
+      height: 0;
+      overflow: hidden;
+      transition: .3s all ease-out;
+      opacity: .8;
+    }
+
+    .card .content-wrapper .content {
+      padding: 0 1.2rem;
+      background-color: #fff;
+      overflow: auto;
+    }
+
+    .card p {
+      font-size: 1.2rem;
+      line-height: 1.5rem;
+    }
+
+    /* active classes below */
+
+    .card.active {
+      transform: translateY(var(--data-offset-top)) scale(calc(480/420));
+      transform-origin: 50% 0;
+      border-radius: 0;
+    }
+
+    .card.active h4 {
+      padding-bottom: .8rem;
+    }
+
+    .card.active img {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      height: var(--img-height-expanded);
+    }
+
+    .card.active .content-wrapper {
+      height: 100vh;
+      transition: .3s all ease-in;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img src="https://source.unsplash.com/900x600/?nature,water,1">
+    <h4>APP OF THE DAY</h4>
+    <div class="content-wrapper">
+      <div class="content">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi dolor veritatis neque cumque. Voluptatibus
+          debitis quia unde corrupti laudantium fuga pariatur tenetur dolorum aspernatur laborum iste animi, consequatur
+          porro sequi?</p>
+        <p>Suscipit, culpa molestiae alias doloribus praesentium omnis tempore impedit deserunt consequatur tempora. Ad
+          id eum non officia corrupti dolores earum architecto corporis commodi delectus excepturi, laudantium qui,
+          harum aut libero!</p>
+        <p>Veritatis nemo deleniti, deserunt iure odit ratione molestiae labore non ipsum obcaecati aperiam officiis
+          repudiandae similique architecto quas nostrum quidem enim fugiat optio alias incidunt ipsam dicta. Minus,
+          perspiciatis reiciendis!</p>
+        <p>Consequuntur facilis cupiditate tempore eius esse! Aut quo iste praesentium recusandae commodi placeat est
+          omnis soluta fuga dolore veniam provident culpa, deleniti ullam hic dignissimos fugiat illo nemo veritatis ex.
+        </p>
+        <p>Ratione eos illo incidunt illum inventore consequatur eligendi, aliquam ducimus voluptatem? Voluptate
+          dignissimos quasi vel eum tempore, aperiam nemo, aliquam ratione amet aspernatur nam! Fugit quaerat nemo
+          aspernatur. Quia, quis.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="https://source.unsplash.com/900x600/?nature,water,2">
+    <h4>APP OF THE DAY</h4>
+    <div class="content-wrapper">
+      <div class="content">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi dolor veritatis neque cumque. Voluptatibus
+          debitis quia unde corrupti laudantium fuga pariatur tenetur dolorum aspernatur laborum iste animi, consequatur
+          porro sequi?</p>
+        <p>Suscipit, culpa molestiae alias doloribus praesentium omnis tempore impedit deserunt consequatur tempora. Ad
+          id eum non officia corrupti dolores earum architecto corporis commodi delectus excepturi, laudantium qui,
+          harum aut libero!</p>
+        <p>Veritatis nemo deleniti, deserunt iure odit ratione molestiae labore non ipsum obcaecati aperiam officiis
+          repudiandae similique architecto quas nostrum quidem enim fugiat optio alias incidunt ipsam dicta. Minus,
+          perspiciatis reiciendis!</p>
+        <p>Consequuntur facilis cupiditate tempore eius esse! Aut quo iste praesentium recusandae commodi placeat est
+          omnis soluta fuga dolore veniam provident culpa, deleniti ullam hic dignissimos fugiat illo nemo veritatis ex.
+        </p>
+        <p>Ratione eos illo incidunt illum inventore consequatur eligendi, aliquam ducimus voluptatem? Voluptate
+          dignissimos quasi vel eum tempore, aperiam nemo, aliquam ratione amet aspernatur nam! Fugit quaerat nemo
+          aspernatur. Quia, quis.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="https://source.unsplash.com/900x600/?nature,water,3">
+    <h4>APP OF THE DAY</h4>
+    <div class="content-wrapper">
+      <div class="content">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi dolor veritatis neque cumque. Voluptatibus
+          debitis quia unde corrupti laudantium fuga pariatur tenetur dolorum aspernatur laborum iste animi, consequatur
+          porro sequi?</p>
+        <p>Suscipit, culpa molestiae alias doloribus praesentium omnis tempore impedit deserunt consequatur tempora. Ad
+          id eum non officia corrupti dolores earum architecto corporis commodi delectus excepturi, laudantium qui,
+          harum aut libero!</p>
+        <p>Veritatis nemo deleniti, deserunt iure odit ratione molestiae labore non ipsum obcaecati aperiam officiis
+          repudiandae similique architecto quas nostrum quidem enim fugiat optio alias incidunt ipsam dicta. Minus,
+          perspiciatis reiciendis!</p>
+        <p>Consequuntur facilis cupiditate tempore eius esse! Aut quo iste praesentium recusandae commodi placeat est
+          omnis soluta fuga dolore veniam provident culpa, deleniti ullam hic dignissimos fugiat illo nemo veritatis ex.
+        </p>
+        <p>Ratione eos illo incidunt illum inventore consequatur eligendi, aliquam ducimus voluptatem? Voluptate
+          dignissimos quasi vel eum tempore, aperiam nemo, aliquam ratione amet aspernatur nam! Fugit quaerat nemo
+          aspernatur. Quia, quis.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <img src="https://source.unsplash.com/900x600/?nature,water,4">
+    <h4>APP OF THE DAY</h4>
+    <div class="content-wrapper">
+      <div class="content">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi dolor veritatis neque cumque. Voluptatibus
+          debitis quia unde corrupti laudantium fuga pariatur tenetur dolorum aspernatur laborum iste animi, consequatur
+          porro sequi?</p>
+        <p>Suscipit, culpa molestiae alias doloribus praesentium omnis tempore impedit deserunt consequatur tempora. Ad
+          id eum non officia corrupti dolores earum architecto corporis commodi delectus excepturi, laudantium qui,
+          harum aut libero!</p>
+        <p>Veritatis nemo deleniti, deserunt iure odit ratione molestiae labore non ipsum obcaecati aperiam officiis
+          repudiandae similique architecto quas nostrum quidem enim fugiat optio alias incidunt ipsam dicta. Minus,
+          perspiciatis reiciendis!</p>
+        <p>Consequuntur facilis cupiditate tempore eius esse! Aut quo iste praesentium recusandae commodi placeat est
+          omnis soluta fuga dolore veniam provident culpa, deleniti ullam hic dignissimos fugiat illo nemo veritatis ex.
+        </p>
+        <p>Ratione eos illo incidunt illum inventore consequatur eligendi, aliquam ducimus voluptatem? Voluptate
+          dignissimos quasi vel eum tempore, aperiam nemo, aliquam ratione amet aspernatur nam! Fugit quaerat nemo
+          aspernatur. Quia, quis.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+    $('.card').on('click', function (e) {
+      let card = $(e.currentTarget)
+      let card_offset_scrolltop = $(card).offset().top - $(window).scrollTop()
+
+      $(card).css('--data-offset-top', card_offset_scrolltop * -1 + 'px')
+
+      $(card).toggleClass('active')
+
+      let ratio = 480 / 420
+      let height = $(window).height()
+      height -= $(card).find('img').outerHeight() * ratio
+      height -= $(card).find('h4').outerHeight() * ratio
+      height /= ratio
+
+      $(card).find('.content').css('height', height)
+
+      if ($(card).hasClass('active')) {
+        $('body').addClass('noscroll')
+      } else {
+        $('body').removeClass('noscroll')
+      }
+    })
+  </script>
+
+</body>
+
+</html>
