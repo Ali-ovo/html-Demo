@@ -14,13 +14,6 @@
       font-family: Helvetica;
     }
 
-    .homepod-section {}
-
-    .other-section {
-      background-color: #eee;
-      height: 3000px;
-    }
-
     .description {
       width: 490px;
       padding: 80px 50px;
@@ -165,7 +158,6 @@
       </div>
     </div>
   </section>
-  <section class="other-section"></section>
 
 
   <script>
@@ -178,6 +170,7 @@
     document.addEventListener('scroll', (e) => {
       let scrolled = html.scrollTop / (sectionHeight - html.clientHeight)
 
+      console.log(scrolled);
       window.requestAnimationFrame(() => {
         homepodSection.style.setProperty('--part-1', calculateOpacity(0.05, 0.15, scrolled))
         homepodSection.style.setProperty('--part-2', calculateOpacity(0.19, 0.23, scrolled))

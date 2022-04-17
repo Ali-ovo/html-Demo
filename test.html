@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      height: 3000px;
+    }
+
+    .line-wrapper {
+      padding-top: 400px;
+    }
+
+    .line {
+      transition: all 0.2s;
+    }
+
+    .s1 .line1 {
+      font-weight: bold;
+      font-size: 4em;
+    }
+
+    .s2 .line2 {
+      font-weight: bold;
+      font-size: 4em;
+    }
+
+    img {
+      position: fixed;
+      top: 0;
+      left: 80px;
+      width: 80px;
+      height: 80px;
+    }
+  </style>
+
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+
+</head>
+
+<body>
+
+  <div id="root">
+  </div>
+
+
+
+
+  <script type="text/babel">
+
+    function MyApp() {
+      const [scrollNum, setScrollNum] = React.useState({ x: 0, y: 0 })
+
+      React.useEffect(() => {
+        document.addEventListener(
+          "scroll",
+          function (e) {
+            // if (!ticking) {
+            window.requestAnimationFrame(() => {
+              setScrollNum({
+                y: window.pageYOffset,
+                x: window.pageYOffset > 1000 ? window.pageYOffset - 1000 : 0
+              })
+              // ticking = false;
+            });
+            // ticking = true;
+            // }
+          }.bind(this)
+        );
+      }, [])
+
+
+      return <div style={{ positon: "relative" }}>
+        <div style={{ position: "fixed" }}>
+          x: {scrollNum.x} <br />
+          y: {scrollNum.y}
+        </div>
+        <img
+          style={{
+            transform: `translate(${scrollNum.x / 2 > 0 ? scrollNum.x / 2 : 0}px, ${scrollNum.y / 2 > 500 ? 500 : scrollNum.y / 2
+              }px) rotate(${(scrollNum.y / 4) > 250 ? 0 : scrollNum.y / 4}deg)`
+          }}
+          src="https://avatars.githubusercontent.com/u/4309517?v=4"
+        ></img>
+        <div className={`line-wrapper ${scrollNum.y < 100 ? "s1" : "s2"}`}>
+          <span className="line line1">First Line</span>
+          <span className="line line2">Next Line</span>
+        </div>
+      </div>
+    }
+
+
+    const el = document.querySelector("#root");
+    ReactDOM.render(<MyApp />, el);
+
+  </script>
+</body>
+
+</html>

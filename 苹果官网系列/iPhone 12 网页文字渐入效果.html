@@ -10,12 +10,13 @@
   <style>
     :root {
       --percentage: 0%;
+      --deg: 75deg
     }
 
     body {
       background-color: #000;
       margin: 0;
-      height: 300vh;
+      height: 600vh;
     }
 
     .sticky {
@@ -32,13 +33,13 @@
       margin: 0;
       padding: 0;
       font-size: 48px;
-      color: #fff;
       letter-spacing: -0.3px;
 
-      background-image: linear-gradient(75deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 33.33%, rgba(255, 255, 255, 0) 66.67%, rgba(255, 255, 255, 0) 100%);
+      background-image: linear-gradient(var(--deg), rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 33.33%, rgba(255, 255, 255, 0) 66.67%, rgba(255, 255, 255, 0) 100%);
       background-size: 300% 100%;
       background-position-x: calc(100% - var(--percentage));
 
+      /* background-position:1%; */
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
@@ -56,7 +57,12 @@
     const h1 = document.querySelector('h1')
 
     document.addEventListener('scroll', (e) => {
-      let scrolled = document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)
+      let scrolled = document.documentElement.scrollTop / ((document.documentElement.scrollHeight - document.documentElement.clientHeight))
+      if (scrolled > 0.5) {
+        h1.style.setProperty('--deg', "285deg")
+      }else {
+        h1.style.setProperty('--deg', "75deg")
+      }
 
       h1.style.setProperty('--percentage', `${scrolled * 100}%`)
     })
