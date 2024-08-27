@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="tutorial" width="500" height="500"></canvas>
+
+    <script>
+      window.onload = function () {
+        let canvasEl = document.getElementById('tutorial')
+        if (!canvasEl.getContext) {
+          return
+        }
+
+        let ctx = canvasEl.getContext('2d')
+
+        ctx.save()
+        ctx.scale(1, 1)
+        ctx.translate(100, 100)
+        ctx.fillRect(0, 0, 100, 50)
+
+        ctx.translate(100, 100)
+        ctx.rotate((Math.PI / 360) * 180)
+        ctx.strokeRect(0, 0, 100, 50)
+        ctx.restore()
+      }
+    </script>
+  </body>
+</html>
