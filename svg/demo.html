@@ -5,9 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
+
+  <style>
+    img {
+      width: 200px;
+      height: 200px;
+    }
+
+    .box {
+      width: 200px;
+      height: 200px;
+      background-image: url(/svg/rect.svg);
+    }
+  </style>
   <body>
     <svg width="100" height="100">
       <rect x="0" y="0" width="100" height="100" fill="red" />
     </svg>
+
+    <img src="./rect.svg" alt="" />
+
+    <div class="box"></div>
   </body>
 </html>
