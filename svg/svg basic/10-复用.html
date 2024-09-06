@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <svg style="display: none;" width="500" height="500">
+      <defs>
+        <rect id="rectangle" x="0" y="0" width="100" height="100"></rect>
+
+        <g stroke="red" fill="transparent" id="circles">
+          <circle cx="50" cy="50" r="25"></circle>
+          <circle cx="80" cy="50" r="25"></circle>
+          <circle cx="110" cy="50" r="25"></circle>
+          <circle cx="140" cy="50" r="25"></circle>
+        </g>
+      </defs>
+    </svg>
+
+    <svg width="500" height="500">
+      <use href="#rectangle"></use>
+
+      <use x="30" y="200" href="#circles"></use>
+    </svg>
+  </body>
+</html>
