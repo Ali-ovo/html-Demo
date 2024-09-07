@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <svg width="300" height="300">
+      <defs>
+        <lineargradient id="gradient1">
+          <stop offset="0%" stop-color="red"></stop>
+          <stop offset="50%" stop-color="blue"></stop>
+          <stop offset="100%" stop-color="green"></stop>
+        </lineargradient>
+
+        <lineargradient id="gradient2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="red"></stop>
+          <stop offset="50%" stop-color="blue"></stop>
+          <stop offset="100%" stop-color="green"></stop>
+        </lineargradient>
+
+        <lineargradient id="gradient3" x1="0" gradientTransform="rotate(100)">
+          <stop offset="0%" stop-color="red"></stop>
+          <stop offset="50%" stop-color="blue"></stop>
+          <stop offset="100%" stop-color="green"></stop>
+        </lineargradient>
+      </defs>
+
+      <rect x="0" y="0" width="100" height="50" fill="url(#gradient3)"></rect>
+    </svg>
+  </body>
+</html>

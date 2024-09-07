@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      #line1 {
+        stroke-width: 10px;
+        animation: line1Move 3s linear;
+      }
+
+      @keyframes line1Move {
+        0% {
+          stroke-dashoffset: 100px;
+        }
+        100% {
+          stroke-dashoffset: 0px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <svg width="300" height="300">
+      <line id="line1" x1="100" y1="70" x2="200" y2="70" stroke="red"></line>
+    </svg>
+  </body>
+</html>

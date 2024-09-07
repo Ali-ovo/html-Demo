@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <svg id="svgId" width="300" height="300">
+      <rect id="rectId" x="10" y="10" width="100" height="50"></rect>
+    </svg>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+
+    <script>
+      window.onload = () => {
+        // let svg = Snap(300, 300)
+        // // let c = svg.circle(100, 100, 50)
+        // let c = svg.paper.circle(100, 100, 50)
+        // c.attr({
+        //   fill: 'red',
+        // })
+        // document.body.appendChild(svg.node)
+
+        let svg = Snap('#svgId')
+
+        let paper = svg.paper
+
+        let c = paper.rect(0, 100, 100, 50)
+        c.attr({
+          fill: 'red',
+        })
+
+        let oldRect = paper.select('#rectId')
+        oldRect.attr({
+          fill: 'blue',
+        })
+
+        Snap.animate(
+          0,
+          100,
+          (val) => {
+            oldRect.attr({
+              x: val,
+            })
+          },
+          1000,
+          mina.snap,
+          () => {
+            oldRect.attr({
+              fill: 'red',
+            })
+          }
+        )
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #e74c3c;
+      }
+      svg {
+        margin: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="100" viewBox="0 0 80 100">
+      <rect fill="#fff" width="3" height="100" transform="rotate(180,3,50)">
+        <animate
+          attributeName="height"
+          values="30;100;30"
+          dur="1s"
+          repeatCount="indefinite"
+          begin="0s"></animate>
+      </rect>
+      <rect x="17" fill="#fff" width="3" height="100" transform="rotate(180 20 50)">
+        <animate
+          attributeName="height"
+          values="30;100;30"
+          dur="1s"
+          repeatCount="indefinite"
+          begin="0.2s"></animate>
+      </rect>
+      <rect x="40" fill="#fff" width="3" height="100" transform="rotate(180,40,50)">
+        <animate
+          attributeName="height"
+          values="30;100;30"
+          dur="1s"
+          repeatCount="indefinite"
+          begin="0.3s"></animate>
+      </rect>
+      <rect x="60" fill="#fff" width="3" height="100" transform="rotate(180 58 50)">
+        <animate
+          attributeName="height"
+          values="30;100;30"
+          dur="1s"
+          repeatCount="indefinite"
+          begin="0.4s"></animate>
+      </rect>
+      <rect
+        x="80"
+        fill="#fff"
+        width="3"
+        height="100"
+        transform="translate(0) rotate(180 76 50)">
+        <animate
+          attributeName="height"
+          values="30;100;30"
+          dur="1s"
+          repeatCount="indefinite"
+          begin="0.5s"></animate>
+      </rect>
+    </svg>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="100"
+      height="100"
+      viewBox="0 0 100 100">
+      <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+        <animate
+          attributeName="opacity"
+          values="0;1;0"
+          dur="3s"
+          begin="0s"
+          repeatCount="indefinite"></animate>
+      </circle>
+      <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
+        <animate
+          attributeName="opacity"
+          values="0;1;0"
+          dur="3s"
+          begin="0.1s"
+          repeatCount="indefinite"></animate>
+      </circle>
+      <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
+        <animate
+          attributeName="opacity"
+          values="0;1;0"
+          dur="3s"
+          begin="0.2s"
+          repeatCount="indefinite"></animate>
+      </circle>
+    </svg>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="100"
+      height="100"
+      viewBox="0 0 100 100">
+      <circle
+        fill="none"
+        stroke="#fff"
+        stroke-width="6"
+        stroke-miterlimit="15"
+        stroke-dasharray="14.2472,14.2472"
+        cx="50"
+        cy="50"
+        r="47">
+        <animatetransform
+          attributeName="transform"
+          type="rotate"
+          values="0 50 50;360 50 50"
+          dur="5s"
+          repeatCount="indefinite"></animatetransform>
+      </circle>
+
+      <circle
+        fill="none"
+        stroke="#fff"
+        stroke-width="1"
+        stroke-miterlimit="10"
+        stroke-dasharray="10,10"
+        cx="50"
+        cy="50"
+        r="39">
+        <animatetransform
+          attributeName="transform"
+          type="rotate"
+          values="0 50,50;360 50,50"
+          dur="5s"
+          repeatCount="indefinite"></animatetransform>
+      </circle>
+
+      <g fill="#fff">
+        <rect x="30" y="35" width="5" height="30">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -5; 0 5; 0 -5"
+            repeatCount="indefinite"
+            dur="1s"></animateTransform>
+        </rect>
+        <rect x="40" y="35" width="5" height="30">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -5; 0 5; 0 -5"
+            repeatCount="indefinite"
+            begin=".1s"
+            dur="1s"></animateTransform>
+        </rect>
+        <rect x="50" y="35" width="5" height="30">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -5; 0 5; 0 -5"
+            repeatCount="indefinite"
+            begin=".2s"
+            dur="1s"></animateTransform>
+        </rect>
+        <rect x="60" y="35" width="5" height="30">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -5; 0 5; 0 -5"
+            repeatCount="indefinite"
+            begin=".3s"
+            dur="1s"></animateTransform>
+        </rect>
+        <rect x="70" y="35" width="5" height="30">
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 -5; 0 5; 0 -5"
+            repeatCount="indefinite"
+            begin=".4s"
+            dur="1s"></animateTransform>
+        </rect>
+      </g>
+    </svg>
+  </body>
+</html>
