@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go WebAssembly与Web Worker演示</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #007d9c; /* Go语言标志色 */
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #e9f7fb;
+            border-left: 4px solid #00ADD8; /* Go蓝色 */
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background: #fff6e6;
+            border-left: 4px solid #FFD43B; /* 黄色警告 */
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .controls input[type="range"] {
+            flex-grow: 1;
+            width: 100%;
+        }
+        .controls input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #00ADD8; /* Go蓝色 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #007d9c;
+        }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        button.secondary {
+            background: #6d6d6d;
+        }
+        .result-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            min-height: 60px;
+            position: relative;
+        }
+        .result {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .time {
+            color: #666;
+            font-style: italic;
+        }
+        .code {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        #animation {
+            width: 50px;
+            height: 50px;
+            background-color: #00ADD8;
+            position: relative;
+            animation: moveBox 1.5s infinite alternate ease-in-out;
+            margin: 20px 0;
+        }
+        @keyframes moveBox {
+            0% { left: 0; transform: rotate(0deg); }
+            100% { left: calc(100% - 50px); transform: rotate(360deg); }
+        }
+        .method-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .method-wasm {
+            background: #00ADD8;
+            color: white;
+        }
+        .method-js {
+            background: #F7DF1E;
+            color: black;
+        }
+        .logs {
+            height: 120px;
+            overflow-y: auto;
+            font-family: monospace;
+            background: #222;
+            color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        .logs .entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .logs .time {
+            color: #aaa;
+        }
+        .logs .info { color: #5cb85c; }
+        .logs .error { color: #d9534f; }
+        .logs .warn { color: #f0ad4e; }
+    </style>
+</head>
+<body>
+    <h1>Go WebAssembly 与 Web Worker 演示</h1>
+    
+    <div class="card">
+        <h2>🔍 关于此演示</h2>
+        <p>本演示展示了如何使用 <span class="code">Go</span> 语言编写 WebAssembly 模块，并在 Web Worker 中加载和执行，从而避免阻塞浏览器的主线程。</p>
+        
+        <div class="info-box">
+            <h3>✅ 运行准备</h3>
+            <p>要正确运行此演示，需要以下文件：</p>
+            <ol>
+                <li><strong>wasm_exec.js</strong> - Go的WebAssembly运行时支持文件</li>
+                <li><strong>fibonacci.wasm</strong> - 由Go代码编译的WebAssembly模块</li>
+            </ol>
+            <p>编译Go代码的命令：<span class="code">GOOS=js GOARCH=wasm go build -o fibonacci.wasm fibonacci.go</span></p>
+            <p>获取wasm_exec.js的命令：<span class="code">cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .</span></p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>🔄 UI响应测试</h2>
+        <p>下面的动画框应当一直保持平滑运动。如果动画变得卡顿或计数器停止增加，说明主线程被阻塞了。</p>
+        <div id="animation"></div>
+        <div class="counter-container" style="text-align: center; margin: 10px 0;">
+            <span>计数器: </span><span id="counter" style="font-weight: bold; color: #00ADD8;">0</span>
+            <span> (每秒应该增加约10次)</span>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>🧮 斐波那契数计算</h2>
+        
+        <div class="controls">
+            <label for="fibNumber">选择要计算的斐波那契数：</label>
+            <input type="range" id="fibRange" min="1" max="50" value="42">
+            <input type="number" id="fibNumber" min="1" max="50" value="42">
+        </div>
+        
+        <div class="controls">
+            <button id="calcMainThread">在主线程计算（会阻塞UI）</button>
+            <button id="calcWorker">在Worker中计算（不会阻塞UI）</button>
+        </div>
+        
+        <div class="result-box">
+            <div>结果: <span id="fibResult" class="result">-</span> <span id="methodBadge" class="method-badge"></span></div>
+            <div>计算时间: <span id="calcTime" class="time">-</span></div>
+        </div>
+        
+        <div class="warning-box">
+            <p><strong>注意：</strong> 选择较大的数值(>40)在主线程计算时，页面应该会明显无响应（动画卡顿、计数停止）。如果没有感觉到阻塞，请尝试增加计算的数值。</p>
+            <p>递归计算时，n=42 通常需要几秒钟；n=45 可能需要30秒以上。</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>📋 状态和日志</h2>
+        <div>
+            <p>Worker状态: <span id="workerStatus">未初始化</span></p>
+            <p>WebAssembly状态: <span id="wasmStatus">未加载</span></p>
+            <button id="checkStatus">检查状态</button>
+        </div>
+        
+        <div class="logs" id="logContainer">
+            <!-- 日志将被JavaScript动态添加 -->
+        </div>
+    </div>
+    
+    <!-- 加载Go的WebAssembly支持 -->
+    <script src="wasm_exec.js"></script>
+    
+    <script>
+        // DOM元素引用
+        const fibRange = document.getElementById('fibRange');
+        const fibNumber = document.getElementById('fibNumber');
+        const calcMainThreadBtn = document.getElementById('calcMainThread');
+        const calcWorkerBtn = document.getElementById('calcWorker');
+        const fibResult = document.getElementById('fibResult');
+        const calcTime = document.getElementById('calcTime');
+        const methodBadge = document.getElementById('methodBadge');
+        const workerStatus = document.getElementById('workerStatus');
+        const wasmStatus = document.getElementById('wasmStatus');
+        const checkStatusBtn = document.getElementById('checkStatus');
+        const logContainer = document.getElementById('logContainer');
+        
+        // 同步两个输入控件
+        fibRange.addEventListener('input', () => {
+            fibNumber.value = fibRange.value;
+        });
+        
+        fibNumber.addEventListener('input', () => {
+            fibRange.value = fibNumber.value;
+        });
+        
+        // 记录日志的函数
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'entry';
+            
+            const time = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span class="time">[${time}]</span> <span class="${type}">${message}</span>`;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            console.log(`[${type}] ${message}`);
+        }
+        
+        // JavaScript实现的斐波那契函数(用于主线程计算)
+        function fibonacciJs(n) {
+            // 递归实现，会更明显地阻塞UI
+            if (n <= 1) return n;
+            return fibonacciJs(n-1) + fibonacciJs(n-2);
+        }
+        
+        // 设置方法标记
+        function setMethodBadge(method) {
+            methodBadge.textContent = method;
+            methodBadge.className = 'method-badge';
+            
+            if (method.includes('wasm')) {
+                methodBadge.classList.add('method-wasm');
+                methodBadge.textContent = 'WebAssembly';
+            } else {
+                methodBadge.classList.add('method-js');
+                methodBadge.textContent = 'JavaScript';
+            }
+        }
+        
+        // 主线程计算按钮事件
+        calcMainThreadBtn.addEventListener('click', function() {
+            const n = parseInt(fibNumber.value);
+            
+            log(`开始在主线程计算斐波那契(${n})...`);
+            fibResult.textContent = "计算中...";
+            calcTime.textContent = "";
+            
+            const start = performance.now();
+            
+            try {
+                // 这会阻塞UI线程
+                const result = fibonacciJs(n);
+                
+                const end = performance.now();
+                const duration = end - start;
+                
+                fibResult.textContent = result;
+                calcTime.textContent = `${duration.toFixed(2)} ms (主线程)`;
+                setMethodBadge('js');
+                
+                log(`主线程计算完成: Fib(${n}) = ${result}, 耗时 ${duration.toFixed(2)} ms`);
+            } catch (error) {
+                fibResult.textContent = "错误";
+                calcTime.textContent = error.toString();
+                log(`计算错误: ${error.toString()}`, 'error');
+            }
+        });
+        
+        // Web Worker
+        let worker = null;
+        
+        // 创建Worker并初始化
+        function setupWorker() {
+            if (worker !== null) {
+                log('Worker已存在，不再创建新的Worker');
+                return;
+            }
+            
+            try {
+                log('创建和初始化Web Worker...');
+                worker = new Worker('wasm-worker.js');
+                workerStatus.textContent = '已创建';
+                
+                // 监听Worker消息
+                worker.onmessage = function(event) {
+                    const data = event.data;
+                    
+                    switch (data.type) {
+                        case 'ready':
+                            log('Worker已准备好，发送初始化命令');
+                            worker.postMessage({ type: 'init' });
+                            break;
+                            
+                        case 'init':
+                            log(`Worker初始化${data.success ? '成功' : '失败'}`);
+                            wasmStatus.textContent = data.wasmLoaded ? '已加载' : '加载失败';
+                            if (!data.success && data.error) {
+                                log(`WebAssembly加载错误: ${data.error}`, 'error');
+                            }
+                            break;
+                            
+                        case 'result':
+                            log(`Worker计算完成: Fib(${data.input}) = ${data.result}, 使用${data.method}, 耗时 ${data.duration.toFixed(2)} ms`);
+                            fibResult.textContent = data.result;
+                            calcTime.textContent = `${data.duration.toFixed(2)} ms (Worker线程)`;
+                            setMethodBadge(data.method);
+                            calcWorkerBtn.disabled = false;
+                            break;
+                            
+                        case 'error':
+                            log(`Worker错误: ${data.message}`, 'error');
+                            fibResult.textContent = "错误";
+                            calcTime.textContent = data.message;
+                            calcWorkerBtn.disabled = false;
+                            break;
+                            
+                        case 'status':
+                            workerStatus.textContent = '运行中';
+                            wasmStatus.textContent = data.wasmLoaded ? 
+                                (data.fibonacciReady ? '已加载且可用' : '已加载但函数不可用') : 
+                                '未加载';
+                            break;
+                    }
+                };
+                
+                // 处理Worker错误
+                worker.onerror = function(error) {
+                    log(`Worker错误: ${error.message}`, 'error');
+                    workerStatus.textContent = '错误';
+                    calcWorkerBtn.disabled = false;
+                };
+                
+            } catch (error) {
+                log(`创建Worker失败: ${error.toString()}`, 'error');
+                workerStatus.textContent = '创建失败';
+            }
+        }
+        
+        // 检查状态按钮
+        checkStatusBtn.addEventListener('click', function() {
+            if (worker === null) {
+                setupWorker();
+            } else {
+                worker.postMessage({ type: 'status' });
+            }
+        });
+        
+        // Worker计算按钮
+        calcWorkerBtn.addEventListener('click', function() {
+            const n = parseInt(fibNumber.value);
+            
+            // 创建Worker(如果不存在)
+            if (worker === null) {
+                setupWorker();
+            }
+            
+            // 防止重复点击
+            calcWorkerBtn.disabled = true;
+            
+            // 重置结果显示
+            fibResult.textContent = "计算中...";
+            calcTime.textContent = "";
+            methodBadge.textContent = "";
+            methodBadge.className = "method-badge";
+            
+            log(`发送计算请求到Worker: Fib(${n})`);
+            
+            // 发送计算请求
+            worker.postMessage({
+                type: 'calculate',
+                n: n
+            });
+        });
+        
+        // 页面加载完成后执行
+        window.addEventListener('load', function() {
+            log('页面已加载', 'info');
+            setupWorker();
+            
+            // 添加计数器，在UI线程阻塞时会停止增加
+            const counterElement = document.getElementById('counter');
+            let count = 0;
+            
+            function updateCounter() {
+                count++;
+                counterElement.textContent = count;
+                setTimeout(updateCounter, 100); // 约每0.1秒更新一次
+            }
+            
+            updateCounter();
+        });
+    </script>
+</body>
+</html> 

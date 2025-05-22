@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndexedDB 任务管理器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .add-task {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .add-task input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .add-task button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-options {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .filter-options button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-options button.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .task-item.completed {
+            background-color: #f9f9f9;
+        }
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .task-checkbox {
+            margin-right: 10px;
+        }
+        .task-title {
+            flex-grow: 1;
+        }
+        .task-actions button {
+            margin-left: 8px;
+            padding: 5px 10px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .task-actions button.delete {
+            background: #ff5252;
+            color: white;
+            border: none;
+        }
+        .task-actions button.edit {
+            background: #2196F3;
+            color: white;
+            border: none;
+        }
+        .db-stats {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>IndexedDB 任务管理器</h1>
+    
+    <div class="add-task">
+        <input type="text" id="taskInput" placeholder="输入新任务...">
+        <button id="addTaskBtn">添加任务</button>
+    </div>
+    
+    <div class="filter-options">
+        <button class="filter-btn active" data-filter="all">所有任务</button>
+        <button class="filter-btn" data-filter="completed">已完成</button>
+        <button class="filter-btn" data-filter="active">未完成</button>
+    </div>
+    
+    <ul id="taskList" class="task-list">
+        <!-- 任务将通过JavaScript动态添加 -->
+    </ul>
+    
+    <div class="db-stats">
+        <p>任务总数: <span id="totalCount">0</span></p>
+        <p>已完成: <span id="completedCount">0</span></p>
+        <p>未完成: <span id="activeCount">0</span></p>
+    </div>
+
+    <script>
+        // 通用函数 - 获取数据库连接
+        function getDB() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open('TaskManager', 1);
+            
+            request.onupgradeneeded = (event) => {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains('tasks')) {
+                const store = db.createObjectStore('tasks', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('title', 'title', { unique: false });
+                store.createIndex('completed', 'completed', { unique: false });
+                store.createIndex('createdAt', 'createdAt', { unique: false });
+              }
+            };
+            
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
+        }
+
+        // 创建任务
+        async function addTask(task) {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readwrite');
+            const store = transaction.objectStore('tasks');
+            
+            // 添加创建时间
+            task.createdAt = new Date().toISOString();
+            
+            const request = store.add(task);
+            request.onsuccess = () => resolve(request.result); // 返回新生成的ID
+            request.onerror = () => reject(request.error);
+            
+            // 事务完成时关闭数据库连接
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // 获取所有任务
+        async function getAllTasks() {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readonly');
+            const store = transaction.objectStore('tasks');
+            const request = store.getAll();
+            
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // 获取单个任务
+        async function getTask(id) {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readonly');
+            const store = transaction.objectStore('tasks');
+            const request = store.get(id);
+            
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+            
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // 更新任务
+        async function updateTask(task) {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readwrite');
+            const store = transaction.objectStore('tasks');
+            
+            // 添加更新时间
+            task.updatedAt = new Date().toISOString();
+            
+            const request = store.put(task); // put = 更新现有条目或添加新条目
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => reject(request.error);
+            
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // 删除任务
+        async function deleteTask(id) {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readwrite');
+            const store = transaction.objectStore('tasks');
+            const request = store.delete(id);
+            
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => reject(request.error);
+            
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // 使用索引查询 - 查找完成/未完成的任务
+        async function findTasksByStatus(completed) {
+          const db = await getDB();
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['tasks'], 'readonly');
+            const store = transaction.objectStore('tasks');
+            
+            // 方法1：使用游标过滤而不是直接使用索引查询
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+              // 在JavaScript中过滤结果
+              const filteredTasks = request.result.filter(task => task.completed === completed);
+              resolve(filteredTasks);
+            };
+            request.onerror = () => reject(request.error);
+            
+            transaction.oncomplete = () => db.close();
+          });
+        }
+
+        // UI交互代码
+        let currentFilter = 'all';
+
+        // 加载和显示任务
+        async function loadTasks() {
+            let tasks;
+            if (currentFilter === 'all') {
+                tasks = await getAllTasks();
+            } else if (currentFilter === 'completed') {
+                tasks = await findTasksByStatus(true);
+            } else if (currentFilter === 'active') {
+                tasks = await findTasksByStatus(false);
+            }
+
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<li class="task-item"><div class="task-title">没有任务</div></li>';
+                return;
+            }
+
+            // 按创建时间排序，最新的在前面
+            tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            tasks.forEach(task => {
+                const taskItem = document.createElement('li');
+                taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskItem.dataset.id = task.id;
+                
+                taskItem.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-actions">
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                    </div>
+                `;
+                
+                taskList.appendChild(taskItem);
+            });
+
+            updateStats();
+        }
+
+        // 更新统计信息
+        async function updateStats() {
+            const allTasks = await getAllTasks();
+            const completedTasks = await findTasksByStatus(true);
+            
+            document.getElementById('totalCount').textContent = allTasks.length;
+            document.getElementById('completedCount').textContent = completedTasks.length;
+            document.getElementById('activeCount').textContent = allTasks.length - completedTasks.length;
+        }
+
+        // 添加新任务
+        document.getElementById('addTaskBtn').addEventListener('click', async () => {
+            const taskInput = document.getElementById('taskInput');
+            const title = taskInput.value.trim();
+            
+            if (title) {
+                await addTask({ title, completed: false });
+                taskInput.value = '';
+                loadTasks();
+            }
+        });
+
+        // 回车添加任务
+        document.getElementById('taskInput').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const title = e.target.value.trim();
+                if (title) {
+                    await addTask({ title, completed: false });
+                    e.target.value = '';
+                    loadTasks();
+                }
+            }
+        });
+
+        // 任务列表事件处理（使用事件委托）
+        document.getElementById('taskList').addEventListener('click', async (e) => {
+            const taskItem = e.target.closest('.task-item');
+            if (!taskItem) return;
+            
+            const taskId = parseInt(taskItem.dataset.id);
+            
+            // 处理复选框点击 - 切换完成状态
+            if (e.target.classList.contains('task-checkbox')) {
+                const task = await getTask(taskId);
+                task.completed = e.target.checked;
+                await updateTask(task);
+                loadTasks();
+            }
+            
+            // 处理删除按钮点击
+            if (e.target.classList.contains('delete')) {
+                if (confirm('确定要删除这个任务吗？')) {
+                    await deleteTask(taskId);
+                    loadTasks();
+                }
+            }
+            
+            // 处理编辑按钮点击
+            if (e.target.classList.contains('edit')) {
+                const task = await getTask(taskId);
+                const newTitle = prompt('编辑任务:', task.title);
+                
+                if (newTitle !== null && newTitle.trim() !== '') {
+                    task.title = newTitle.trim();
+                    await updateTask(task);
+                    loadTasks();
+                }
+            }
+        });
+
+        // 过滤器按钮事件
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                loadTasks();
+            });
+        });
+
+        // 初始加载
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+        });
+    </script>
+</body>
+</html> 

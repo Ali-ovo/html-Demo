@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker 演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .controls button {
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+        .controls button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .controls button.danger {
+            background: #f44336;
+        }
+        .controls button.primary {
+            background: #2196F3;
+        }
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        .demo-section h2 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            color: #444;
+        }
+        #uiBlockingDemo, #workerDemo {
+            height: 100px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #f9f9f9;
+            margin-top: 10px;
+        }
+        #progress, #workerProgress {
+            height: 20px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        #progressBar, #workerProgressBar {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            transition: width 0.3s;
+        }
+        #animationBox {
+            width: 50px;
+            height: 50px;
+            background-color: #3498db;
+            position: relative;
+            animation: moveBox 2s infinite alternate;
+            margin: 20px 0;
+        }
+        @keyframes moveBox {
+            0% { left: 0; }
+            100% { left: calc(100% - 50px); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Worker 演示</h1>
+    
+    <div class="container">
+        <div class="demo-section">
+            <h2>动画 - 用于观察UI是否被阻塞</h2>
+            <p>下面的蓝色方块应该始终保持平滑移动。如果移动变得卡顿，说明主线程被阻塞了。</p>
+            <div id="animationBox"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>1. 主线程中执行计算密集型任务</h2>
+            <p>这个演示在主线程中执行大量计算，会阻塞UI。</p>
+            <div class="controls">
+                <button id="startBlocking">开始大量计算（会卡住UI）</button>
+            </div>
+            <div id="progress">
+                <div id="progressBar"></div>
+            </div>
+            <div id="uiBlockingDemo"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>2. 使用 Web Worker 执行计算密集型任务</h2>
+            <p>这个演示使用Web Worker在后台线程执行大量计算，不会阻塞UI。</p>
+            <div class="controls">
+                <button id="startWorker" class="primary">使用Worker执行大量计算</button>
+                <button id="stopWorker" class="danger" disabled>终止Worker</button>
+            </div>
+            <div id="workerProgress">
+                <div id="workerProgressBar"></div>
+            </div>
+            <div id="workerDemo"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>3. Worker之间的数据通信</h2>
+            <p>这个演示展示如何在主线程和Worker之间传递复杂数据。</p>
+            <div class="controls">
+                <button id="sendData" class="primary">发送数据给Worker</button>
+            </div>
+            <div id="dataResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // UI元素引用
+        const uiDemoOutput = document.getElementById('uiBlockingDemo');
+        const workerDemoOutput = document.getElementById('workerDemo');
+        const progressBar = document.getElementById('progressBar');
+        const workerProgressBar = document.getElementById('workerProgressBar');
+        const dataResults = document.getElementById('dataResults');
+        
+        // 日志函数
+        function log(element, message) {
+            const time = new Date().toLocaleTimeString();
+            element.innerHTML += `<div>[${time}] ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        // 1. 主线程计算密集型任务演示
+        document.getElementById('startBlocking').addEventListener('click', function() {
+            log(uiDemoOutput, "开始在主线程执行大量计算...");
+            this.disabled = true;
+            
+            const iterations = 10;
+            let count = 0;
+            
+            // 模拟大量计算
+            for (let i = 0; i < iterations; i++) {
+                // 使用setTimeout在每个循环之间允许UI更新
+                setTimeout(() => {
+                    // 执行一些密集计算，这将阻塞主线程
+                    const start = performance.now();
+                    let result = 0;
+                    for (let j = 0; j < 100000000; j++) {
+                        result += Math.sqrt(j);
+                    }
+                    const end = performance.now();
+                    
+                    count++;
+                    const progress = (count / iterations) * 100;
+                    progressBar.style.width = progress + '%';
+                    
+                    log(uiDemoOutput, `完成计算批次 ${count}/${iterations}，耗时: ${Math.round(end - start)} ms`);
+                    
+                    if (count === iterations) {
+                        log(uiDemoOutput, "所有计算完成！");
+                        this.disabled = false;
+                    }
+                }, i * 100); // 小延迟让UI有机会更新
+            }
+        });
+
+        // 2. Web Worker演示
+        let worker;
+        let isWorkerRunning = false;
+
+        document.getElementById('startWorker').addEventListener('click', function() {
+            if (isWorkerRunning) return;
+            
+            // 创建一个新的Web Worker
+            worker = new Worker('worker.js');
+            isWorkerRunning = true;
+            
+            // 启用/禁用按钮
+            this.disabled = true;
+            document.getElementById('stopWorker').disabled = false;
+            
+            log(workerDemoOutput, "启动Web Worker执行大量计算...");
+            
+            // 监听Worker发回的消息
+            worker.onmessage = function(event) {
+                const data = event.data;
+                
+                if (data.type === 'progress') {
+                    // 更新进度条
+                    workerProgressBar.style.width = data.progress + '%';
+                } 
+                else if (data.type === 'result') {
+                    log(workerDemoOutput, `Worker计算完成批次 ${data.iteration}/${data.total}，耗时: ${data.duration} ms`);
+                    
+                    if (data.iteration === data.total) {
+                        log(workerDemoOutput, "Worker完成所有计算！");
+                        isWorkerRunning = false;
+                        document.getElementById('startWorker').disabled = false;
+                        document.getElementById('stopWorker').disabled = true;
+                    }
+                }
+                else if (data.type === 'error') {
+                    log(workerDemoOutput, `Worker错误: ${data.message}`);
+                    isWorkerRunning = false;
+                    document.getElementById('startWorker').disabled = false;
+                    document.getElementById('stopWorker').disabled = true;
+                }
+            };
+            
+            // 发送命令给Worker开始工作
+            worker.postMessage({
+                command: 'start',
+                iterations: 10  // 设置要执行的迭代次数
+            });
+        });
+
+        // 停止Worker
+        document.getElementById('stopWorker').addEventListener('click', function() {
+            if (!isWorkerRunning) return;
+            
+            log(workerDemoOutput, "正在终止Worker...");
+            
+            // 告诉Worker停止工作
+            worker.postMessage({ command: 'stop' });
+            
+            // 立即终止Worker
+            worker.terminate();
+            
+            // 更新状态
+            isWorkerRunning = false;
+            document.getElementById('startWorker').disabled = false;
+            this.disabled = true;
+            
+            log(workerDemoOutput, "Worker已终止");
+        });
+
+        // 3. 向Worker发送复杂数据
+        document.getElementById('sendData').addEventListener('click', function() {
+            if (isWorkerRunning) {
+                log(dataResults, "请等待当前Worker任务完成或终止它");
+                return;
+            }
+            
+            // 创建数据Worker
+            const dataWorker = new Worker('worker.js');
+            
+            // 准备要发送的数据
+            const complexData = {
+                command: 'processData',
+                data: {
+                    numbers: Array.from({length: 1000}, (_, i) => i),
+                    text: "这是一段要处理的文本",
+                    config: {
+                        useFastAlgorithm: true,
+                        processingLevel: 5,
+                        filters: ['alpha', 'beta', 'gamma']
+                    }
+                }
+            };
+            
+            dataResults.innerHTML = '';
+            log(dataResults, "发送数据到Worker进行处理...");
+            
+            // 监听Worker的响应
+            dataWorker.onmessage = function(event) {
+                const result = event.data;
+                
+                if (result.type === 'dataResult') {
+                    log(dataResults, "数据处理完成！");
+                    log(dataResults, `处理了 ${result.summary.numberCount} 个数字`);
+                    log(dataResults, `文本处理结果: ${result.summary.textSummary}`);
+                    log(dataResults, `平均值: ${result.summary.average}`);
+                    log(dataResults, `使用的过滤器: ${result.summary.filters.join(', ')}`);
+                    
+                    // 完成后终止Worker
+                    dataWorker.terminate();
+                }
+            };
+            
+            // 发送数据
+            dataWorker.postMessage(complexData);
+        });
+    </script>
+</body>
+</html> 
